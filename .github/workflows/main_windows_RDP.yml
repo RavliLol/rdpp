@@ -22,13 +22,17 @@ jobs:
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
     - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
     - name: Download softgpu ISO
-      run: Invoke-WebRequest https://computernewb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
+      run: Invoke-WebRequest https://computervneb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
+    - name: Check ISO File Exists
+      run: if (Test-Path -Path softgpu.iso) { Write-Output "ISO file exists." } else { throw "ISO file not found." }
     - name: Mount softgpu ISO
       run: Mount-DiskImage -ImagePath softgpu.iso
     - name: Install softgpu driver
       run: Start-Process "D:\setup.exe" -ArgumentList '/S' -NoNewWindow -Wait
     - name: Verify softgpu Installation
       run: Get-Process | Select-String "softgpu" | Format-Table -AutoSize
-
     - name: Create Tunnel
       run: .\ngrok\ngrok.exe tcp 3389
+
+    # New steps for downloading and installing the virtual GPU driver
+   
