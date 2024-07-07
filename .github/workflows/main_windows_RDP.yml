@@ -11,37 +11,54 @@ jobs:
       run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
 
     - name: Extract ngrok
-      run: Expand-Archive ngrok.zip
+      run: Expand-Archive -Path ngrok.zip -DestinationPath .
 
     - name: Authenticate ngrok
-      run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+      run: .\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
 
     - name: Enable Remote Desktop
-      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
 
     - name: Enable Firewall Rule for Remote Desktop
       run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
     - name: Set RDP User Authentication
-      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
 
     - name: Set Password for runneradmin
       run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
 
-    - name: Create ngrok Tunnel
+    - name: Start ngrok
       run: |
-        .\ngrok\ngrok.exe tcp 3389 &
-        Start-Sleep -Seconds 5
-        $url = (Invoke-RestMethod -Uri http://localhost:4040/api/tunnels/).tunnels[0].public_url
-        Write-Output "ngrok tunnel URL: $url"
-        Start-Sleep -Seconds 216000
+        Start-Process -NoNewWindow -FilePath .\ngrok.exe -ArgumentList "tcp 3389"
+        Start-Sleep -Seconds 10  # Wait for ngrok to start
+      shell: pwsh
 
-    - name: Infinite Loop (Keeps the runner alive)
+    - name: Get ngrok Tunnel URL
       run: |
-        $n = 1
+        $retries = 5
+        $url = ""
+        for ($i = 0; $i -lt $retries; $i++) {
+          try {
+            $response = Invoke-RestMethod -Uri http://localhost:4040/api/tunnels
+            $url = $response.tunnels[0].public_url
+            break
+          } catch {
+            Write-Output "Attempt $($i+1) failed. Retrying..."
+            Start-Sleep -Seconds 5
+          }
+        }
+        if (-not $url) {
+          throw "Failed to get ngrok tunnel URL"
+        }
+        Write-Output "ngrok tunnel URL: $url"
+      shell: pwsh
+
+    - name: Keep Runner Alive
+      run: |
         while ($true) {
-          $n += 1
+          Start-Sleep -Seconds 60
         }
       shell: pwsh
