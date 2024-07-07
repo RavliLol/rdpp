@@ -32,7 +32,7 @@ jobs:
     - name: Mount softgpu ISO
       run: Mount-DiskImage -ImagePath $PWD\softgpu.iso
     - name: List Mounted Disks
-      run: Get-DiskImage | Select-Object -Property DevicePath
+      run: Get-DiskImage -ImagePath | Select-Object -Property DevicePath
     - name: Install softgpu driver
       run: Start-Process "D:\setup.exe" -ArgumentList '/S' -NoNewWindow -Wait
     - name: Verify softgpu Installation
