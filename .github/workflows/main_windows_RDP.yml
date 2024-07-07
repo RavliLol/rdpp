@@ -1,4 +1,4 @@
-name: CLI Windows
+name: CL
 
 on: [push, workflow_dispatch]
 
@@ -24,8 +24,8 @@ jobs:
     - name: Create Tunnel
       run: .\ngrok\ngrok.exe tcp 3389
 
-    # New steps for downloading and installing virtual GPU
-     - name: Download softgpu ISO
+    # New steps for downloading and installing the virtual GPU driver
+    - name: Download softgpu ISO
       run: Invoke-WebRequest https://computernewb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
     - name: Mount softgpu ISO
       run: Mount-DiskImage -ImagePath softgpu.iso
