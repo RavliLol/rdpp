@@ -21,11 +21,7 @@ jobs:
     - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
     - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-    - name: Create Tunnel
-      run: .\ngrok\ngrok.exe tcp 3389
-
-    # New steps for downloading and installing the virtual GPU driver
-    - name: Download softgpu ISO
+     - name: Download softgpu ISO
       run: Invoke-WebRequest https://computernewb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
     - name: Mount softgpu ISO
       run: Mount-DiskImage -ImagePath softgpu.iso
@@ -33,3 +29,6 @@ jobs:
       run: Start-Process "D:\setup.exe" -ArgumentList '/S' -NoNewWindow -Wait
     - name: Verify softgpu Installation
       run: Get-Process | Select-String "softgpu" | Format-Table -AutoSize
+
+    - name: Create Tunnel
+      run: .\ngrok\ngrok.exe tcp 3389
