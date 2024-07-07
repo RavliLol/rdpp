@@ -34,7 +34,7 @@ jobs:
     - name: List Mounted Disks
       run: Get-DiskImage -ImagePath $PWD\softgpu.iso | Select-Object -Property DevicePath
     - name: Install softgpu driver
-      run: Start-Process "D:\softgpu.exe" -ArgumentList '/S' -NoNewWindow -Wait
+      run: Start-Process "\\.\CDROM0\softgpu.exe" -ArgumentList '/S' -NoNewWindow -Wait
     - name: Verify softgpu Installation
       run: Get-Process | Select-String "softgpu" | Format-Table -AutoSize
     - name: Create Tunnel
