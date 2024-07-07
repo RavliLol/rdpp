@@ -22,19 +22,19 @@ jobs:
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
     - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
     - name: Download softgpu ISO
-      run: Invoke-WebRequest https://computernewb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
+      run: Invoke-WebRequest https://computernewb.com/isos/driver/virtio-win-0.1.240.iso -OutFile virtio.iso
     - name: Check ISO File Exists
-      run: if (Test-Path -Path softgpu.iso) { Write-Output "ISO file exists." } else { throw "ISO file not found." }
+      run: if (Test-Path -Path virtio.iso) { Write-Output "ISO file exists." } else { throw "ISO file not found." }
     - name: List Directory Contents
       run: Get-ChildItem -Path .
     - name: Unmount Previous ISO (if any)
-      run: Dismount-DiskImage -ImagePath $PWD\softgpu.iso || Write-Output "No previous ISO mounted."
-    - name: Mount softgpu ISO
-      run: Mount-DiskImage -ImagePath $PWD\softgpu.iso
+      run: Dismount-DiskImage -ImagePath $PWD\virtio.iso || Write-Output "No previous ISO mounted."
+    - name: Mount virtio ISO
+      run: Mount-DiskImage -ImagePath $PWD\virtio.iso
     - name: List Mounted Disks
-      run: Get-DiskImage -ImagePath $PWD\softgpu.iso | Select-Object -Property DevicePath
-    - name: Install softgpu driver
-      run: Start-Process "\\.\CDROM0\softgpu.exe" -ArgumentList '/S' -NoNewWindow -Wait
+      run: Get-DiskImage -ImagePath $PWD\virtio.iso | Select-Object -Property DevicePath
+    - name: Install virtio driver
+      run: Start-Process "\\.\CDROM0\virtio-win-guest-tools-0.1.240.exe" -ArgumentList '/S' -NoNewWindow -Wait
     - name: Verify softgpu Installation
       run: Get-Process | Select-String "softgpu" | Format-Table -AutoSize
     - name: Create Tunnel
