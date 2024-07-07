@@ -34,9 +34,9 @@ jobs:
     - name: List Mounted Disks
       run: Get-DiskImage -ImagePath $PWD\virtio.iso | Select-Object -Property DevicePath
     - name: Install virtio driver
-      run: Start-Process "\\.\CDROM0\virtio-win-guest-tools-0.1.240.exe" -ArgumentList '/S' -NoNewWindow -Wait
-    - name: Verify softgpu Installation
-      run: Get-Process | Select-String "softgpu" | Format-Table -AutoSize
+      run: Start-Process "\\.\CDROM0\virtio-win-guest-tools.exe" -ArgumentList '/S' -NoNewWindow -Wait
+    - name: Verify virtio Installation
+      run: Get-Process | Select-String "virtio" | Format-Table -AutoSize
     - name: Create Tunnel
       run: .\ngrok\ngrok.exe tcp 3389
 
