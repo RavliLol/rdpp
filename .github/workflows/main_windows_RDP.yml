@@ -25,10 +25,11 @@ jobs:
       run: .\ngrok\ngrok.exe tcp 3389
 
     # New steps for downloading and installing virtual GPU
-    - name: Download NVIDIA vGPU Driver
-      run: |
-        Invoke-WebRequest https://us.download.nvidia.com/Windows/Quadro_Certified/xxx.xx/quadro-desktop-notebook-win10-64bit-international-whql.exe -OutFile nvidia-vgpu.exe
-    - name: Install NVIDIA vGPU Driver
-      run: Start-Process nvidia-vgpu.exe -ArgumentList '/S' -NoNewWindow -Wait
-    - name: Verify NVIDIA vGPU Installation
-      run: Get-Process | Select-String "nv" | Format-Table -AutoSize
+     - name: Download softgpu ISO
+      run: Invoke-WebRequest https://computernewb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
+    - name: Mount softgpu ISO
+      run: Mount-DiskImage -ImagePath softgpu.iso
+    - name: Install softgpu driver
+      run: Start-Process "D:\setup.exe" -ArgumentList '/S' -NoNewWindow -Wait
+    - name: Verify softgpu Installation
+      run: Get-Process | Select-String "softgpu" | Format-Table -AutoSize
