@@ -39,6 +39,3 @@ jobs:
       run: Get-Process | Select-String "virtio" | Format-Table -AutoSize
     - name: Create Tunnel
       run: .\ngrok\ngrok.exe tcp 3389
-
-    # New steps for downloading and installing the virtual GPU driver
-    
