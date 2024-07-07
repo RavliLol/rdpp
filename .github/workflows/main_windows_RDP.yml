@@ -22,7 +22,7 @@ jobs:
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
     - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
     - name: Download softgpu ISO
-      run: Invoke-WebRequest https://computervneb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
+      run: Invoke-WebRequest https://computernewb.com/isos/driver/softgpu-0.5.2024.24.iso -OutFile softgpu.iso
     - name: Check ISO File Exists
       run: if (Test-Path -Path softgpu.iso) { Write-Output "ISO file exists." } else { throw "ISO file not found." }
     - name: Mount softgpu ISO
